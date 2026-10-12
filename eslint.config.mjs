@@ -7,7 +7,15 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist/', 'coverage/', 'node_modules/', 'eslint.config.mjs'] },
+  {
+    ignores: [
+      'dist/',
+      'coverage/',
+      'node_modules/',
+      'public/engine/',
+      'eslint.config.mjs',
+    ],
+  },
   eslint.configs.recommended,
   // Type-aware rules: catch floating promises, unsafe `any` flow, and
   // conditions that are always true or false.
@@ -26,6 +34,15 @@ export default tseslint.config(
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
+    },
+  },
+  // Node build scripts sit outside the TypeScript projects: no type info.
+  {
+    files: ['scripts/**/*.mjs'],
+    ...tseslint.configs.disableTypeChecked,
+    languageOptions: {
+      ...tseslint.configs.disableTypeChecked.languageOptions,
+      globals: globals.node,
     },
   },
   // Rules of Hooks, exhaustive deps, and the React Compiler purity checks.

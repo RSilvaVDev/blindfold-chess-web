@@ -12,6 +12,12 @@ cp .env.example .env
 pnpm dev
 ```
 
+## Chess engine
+
+The opponent is [Stockfish](https://stockfishchess.org/), via [Stockfish.js](https://github.com/nmrugg/stockfish.js) (lite, single-threaded WebAssembly build), running in a Web Worker in the browser. `pnpm dev` and `pnpm build` copy it from `node_modules` into `public/engine/`. Easy, medium, and hard set Stockfish's skill level, search depth, and time per move (`src/engine/levels.ts`). If the engine cannot load, the game falls back to a random-move opponent.
+
+Stockfish is licensed under the GNU GPL v3; its license is served next to the engine at `/engine/COPYING.txt`, and its source is at https://github.com/official-stockfish/Stockfish.
+
 ## Environment
 
 | Variable                        | Required | Purpose                                                                                                                                  |

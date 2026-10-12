@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "pnpm engine && vite",
+    "build": "pnpm engine && tsc -b && vite build",
     "preview": "vite preview",
+    "engine": "node scripts/copy-engine.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
@@ -17,7 +18,8 @@
     "chess.js": "1.4.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router": "^7.18.4"
+    "react-router": "^7.18.4",
+    "stockfish": "19.0.0"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

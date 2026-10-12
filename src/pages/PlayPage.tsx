@@ -5,6 +5,7 @@ import { BoardView } from '../components/BoardView';
 import { NewGameForm } from '../components/NewGameForm';
 import type { GameSettings, GameStatus } from '../game-session/types';
 import { useChessGame } from '../game-session/useChessGame';
+import { useEngineTurn } from '../game-session/useEngineTurn';
 
 interface Me {
   id: string;
@@ -30,6 +31,7 @@ export function PlayPage() {
   const { signOut } = useAuth();
   const game = useChessGame();
   const [settings, setSettings] = useState<GameSettings | null>(null);
+  const engine = useEngineTurn(game, settings);
   const [me, setMe] = useState<Me | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,6 +68,9 @@ export function PlayPage() {
             You play {COLOR_NAME[settings.playerColor]}, {settings.level} level
           </h2>
           <p>{describeStatus(game.status, COLOR_NAME[game.turn])}</p>
+          {engine.engineName && <p>Opponent: {engine.engineName}</p>}
+          {engine.thinking && <p role="status">The engine is thinking…</p>}
+          {engine.error && <p role="alert">{engine.error}</p>}
           <BoardView
             board={game.board}
             orientation={settings.playerColor}

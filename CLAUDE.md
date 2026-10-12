@@ -24,7 +24,10 @@ src/
   game-session/   Game state and the hooks that call game-logic: GameStore (owns the
                   chess.js instance), useChessGame, useGameSession, sessionReducer,
                   useLeaveWarning
-  engine/         StockfishClient, stockfish.worker.ts, levels.ts
+  engine/         ChessEngine interface, StockfishClient (UCI over a Web Worker),
+                  RandomMoveEngine (fallback), getEngine, levels, uciMove
+scripts/
+  copy-engine.mjs Copies the Stockfish lite single-threaded build into public/engine/
   speech/         useSpeaker, AudioQueue, useSpeechRecognition
   auth/           supabaseClient, AuthProvider, useAuth, ProtectedRouteGuard
   settings/       SettingsProvider, useSettings
@@ -93,8 +96,11 @@ Listed with placeholder values in `.env.example`. `VITE_` variables are bundled 
 
 ## Known gotchas
 
-- Load the Stockfish worker with `new Worker(new URL('./stockfish.worker.ts', import.meta.url), { type: 'module' })`, or serve the prebuilt engine from `public/`. If setup stalls, fall back to a random legal move so the game loop still works.
-- Confirm the installed chess.js has `attackers(square, color)`; the "leaves your king in check" reason depends on it. Pawn pushes need their own check.
+- Stockfish is the npm `stockfish` package (pinned 19.0.0), lite single-threaded build (~1.8 MB WASM). `pnpm dev` and `pnpm build` copy it into `public/engine/` (git-ignored); the prebuilt `stockfish.js` is itself the Web Worker and loads `stockfish.wasm` from the same folder. Do not use the multi-threaded builds: they need COOP/COEP headers that Railway's static server does not send. Do not use the full builds: ~99 MB each.
+- Stockfish is GPL-3.0. Ship it unmodified with `COPYING.txt` (copied next to it) and keep the license note in the README.
+- `getEngine()` falls back to `RandomMoveEngine` if Stockfish fails to start, so the game never stalls.
+- The `stockfish` install script is denied in `pnpm-workspace.yaml`; it only symlinks the unused full build.
+- chess.js 1.4.0 has `attackers(square, color)`; the "leaves your king in check" reason depends on it. Pawn pushes need their own check.
 - Web Speech recognition works in Chrome and Edge only.
 - The engine moves first when the player picks Black.
 - Audio playback needs a prior user gesture; the first spoken line follows the Start game click.

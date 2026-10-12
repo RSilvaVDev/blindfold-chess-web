@@ -13,6 +13,9 @@ dist-ssr/
 coverage/
 *.tsbuildinfo
 
+# Copied from node_modules by scripts/copy-engine.mjs
+public/engine/
+
 # Logs
 logs/
 *.log
