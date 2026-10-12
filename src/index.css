@@ -18,3 +18,50 @@ body {
   outline: 3px solid currentColor;
   outline-offset: 2px;
 }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  width: min(100%, 26rem);
+  aspect-ratio: 1;
+  border: 2px solid #3b3b3b;
+  margin-block: 1rem;
+}
+
+.square {
+  position: relative;
+  display: grid;
+  place-items: center;
+  font-size: clamp(1.25rem, 6vw, 2.25rem);
+  line-height: 1;
+  color: #111;
+}
+
+.square.light {
+  background: #eeeed2;
+}
+
+.square.dark {
+  background: #769656;
+}
+
+.square.last-move {
+  box-shadow: inset 0 0 0 3px #f5c542;
+}
+
+.rank-label,
+.file-label {
+  position: absolute;
+  font-size: 0.65rem;
+  color: #333;
+}
+
+.rank-label {
+  top: 2px;
+  left: 3px;
+}
+
+.file-label {
+  bottom: 1px;
+  right: 3px;
+}
