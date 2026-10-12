@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type { Move } from 'chess.js';
 import { getEngine } from '../engine/getEngine';
 import type { GameSettings } from './types';
 import type { ChessGame } from './useChessGame';
@@ -14,10 +15,12 @@ export interface EngineTurn {
 
 // Plays the engine's reply whenever it is the engine's turn, including the
 // first move when the player is Black. A reply for a position that has since
-// changed (new game, take back) is dropped.
+// changed (new game, take back) is dropped. `onMove` must be stable
+// (useCallback); it runs after each engine move is applied.
 export function useEngineTurn(
   game: ChessGame,
   settings: GameSettings | null,
+  onMove: (move: Move) => void,
 ): EngineTurn {
   // The position the "thinking" notice belongs to, so a cancelled search never
   // leaves the notice showing for the next one.
@@ -43,7 +46,9 @@ export function useEngineTurn(
       })
       .then((move) => {
         if (cancelled) return;
-        if (!play(move)) setError('The engine chose a move that is not legal.');
+        const applied = play(move);
+        if (applied) onMove(applied);
+        else setError('The engine chose a move that is not legal.');
       })
       .catch((e: unknown) => {
         if (!cancelled)
@@ -55,7 +60,7 @@ export function useEngineTurn(
       cancelled = true;
       clearTimeout(notice);
     };
-  }, [enginesTurn, fen, level, play]);
+  }, [enginesTurn, fen, level, play, onMove]);
 
   return { thinking: enginesTurn && thinkingFen === fen, engineName, error };
 }

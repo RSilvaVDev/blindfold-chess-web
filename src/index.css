@@ -116,3 +116,97 @@ fieldset {
   bottom: 3px;
   right: 3px;
 }
+
+/* Hidden on screen, still read by screen readers. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Off screen until focused, then the first thing a keyboard user sees. */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  padding: 0.5rem 0.75rem;
+  background: Canvas;
+  color: CanvasText;
+  border: 2px solid currentColor;
+  z-index: 10;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.move-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.move-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.move-input input {
+  font-size: 1.25rem;
+  width: 12rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.move-input button {
+  font-size: 1.1rem;
+}
+
+.hint {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.transcript {
+  width: min(100%, 34rem);
+  text-align: left;
+}
+
+.transcript h2 {
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.transcript ol {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0.5rem;
+  max-height: 12rem;
+  overflow-y: auto;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-radius: 4px;
+}
+
+.entry {
+  padding-block: 0.15rem;
+}
+
+.entry-label {
+  font-weight: 600;
+}
+
+.entry-flag {
+  color: #c0392b;
+}
+
+@media (prefers-color-scheme: dark) {
+  .entry-flag {
+    color: #ff8a80;
+  }
+}

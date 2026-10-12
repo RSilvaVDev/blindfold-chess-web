@@ -8,7 +8,7 @@ export function ProtectedRouteGuard() {
 
   if (loading) {
     return (
-      <main aria-busy="true">
+      <main id="main" aria-busy="true">
         <p role="status">Checking your session…</p>
       </main>
     );

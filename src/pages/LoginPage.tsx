@@ -27,7 +27,7 @@ export function LoginPage() {
   const submit = mode === 'sign-in' ? signIn : signUp;
 
   return (
-    <main>
+    <main id="main">
       <h1>{mode === 'sign-in' ? 'Sign in' : 'Create an account'}</h1>
       <p>Blindfold Chess Coach: play chess by voice, with no board needed.</p>
       {notice && <p role="status">{notice}</p>}

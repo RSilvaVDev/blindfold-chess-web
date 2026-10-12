@@ -5,6 +5,9 @@ import { GameStore, type GameSnapshot, type MoveInput } from './gameStore';
 export type { MoveInput } from './gameStore';
 
 export interface ChessGame extends GameSnapshot {
+  // The state right now, including changes made since this render (for code
+  // that must react to a move it just played).
+  latest: () => GameSnapshot;
   legalMoves: () => Move[];
   play: (move: MoveInput) => Move | null;
   undo: (plies: number) => number;
@@ -19,6 +22,7 @@ export function useChessGame(): ChessGame {
 
   return {
     ...snapshot,
+    latest: store.getSnapshot,
     legalMoves: store.legalMoves,
     play: store.play,
     undo: store.undo,
