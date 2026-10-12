@@ -83,9 +83,9 @@ pnpm test               # vitest run (src/game-logic)
 
 ## Environment
 
-`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_URL`.
+`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` (`sb_publishable_...`), `VITE_API_URL`. Use Supabase's new publishable key, never the legacy anon key; `getEnv()` rejects anything that isn't `sb_publishable_...`.
 
-Listed with placeholder values in `.env.example`. `VITE_` variables are bundled into the public build, so only public values go here: never the Supabase service role key or the ElevenLabs key. Read and check env at runtime, not at build time, so CI builds without secrets.
+Listed with placeholder values in `.env.example`. `VITE_` variables are bundled into the public build, so only public values go here: never the Supabase secret key or the ElevenLabs key. Read and check env at runtime, not at build time, so CI builds without secrets.
 
 ## Known gotchas
 
