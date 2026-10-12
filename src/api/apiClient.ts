@@ -14,10 +14,10 @@ export class ApiError extends Error {
 
 // Calls blindfold-chess-api with the current access token. A 401 means the
 // session is no longer valid, so it signs out and the router returns to login.
-export async function apiFetch<T>(
+async function authorizedFetch(
   path: string,
-  init: RequestInit = {},
-): Promise<T> {
+  init: RequestInit,
+): Promise<Response> {
   const { data } = await getSupabase().auth.getSession();
   const token = data.session?.access_token;
 
@@ -45,6 +45,22 @@ export async function apiFetch<T>(
         : `Request failed (${response.status}).`;
     throw new ApiError(response.status, message);
   }
+  return response;
+}
 
+export async function apiFetch<T>(
+  path: string,
+  init: RequestInit = {},
+): Promise<T> {
+  const response = await authorizedFetch(path, init);
   return (await response.json()) as T;
+}
+
+// POSTs JSON and returns the binary response (for /tts audio).
+export async function apiFetchBlob(path: string, body: unknown): Promise<Blob> {
+  const response = await authorizedFetch(path, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+  return response.blob();
 }

@@ -9,6 +9,7 @@ import { NewGameForm } from '../components/NewGameForm';
 import { Transcript } from '../components/Transcript';
 import { COLOR_NAME } from '../game-logic/narrator';
 import { useGameSession } from '../game-session/useGameSession';
+import { useSpeaker } from '../speech/useSpeaker';
 
 interface Me {
   id: string;
@@ -19,6 +20,9 @@ export function PlayPage() {
   const { signOut } = useAuth();
   const session = useGameSession();
   const { game, settings, engine } = session;
+  // Every announcement is spoken (ElevenLabs, or the browser voice as fallback)
+  // and also lands in the live region and transcript.
+  useSpeaker(session.announcement);
   const [me, setMe] = useState<Me | null>(null);
   const [error, setError] = useState<string | null>(null);
 
