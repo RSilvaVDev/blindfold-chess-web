@@ -12,7 +12,7 @@ Chess is the passion, voice is the interface, and the hard part is making a spok
 
 - **Accounts:** sign up and sign in with email and password (Supabase Auth). Protected pages redirect to sign-in and back; an expired session signs you out and says why on the sign-in page.
 - **A full game against Stockfish** (WebAssembly, in a Web Worker) at easy, medium, or hard, as White or Black. As Black, the engine moves first. A "thinking" notice appears if it takes over two seconds. If Stockfish can't load, a random-move opponent keeps the game playable.
-- **Typed moves** in algebraic notation (`e4`, `Nf3`, `exd5`, `O-O`, `e7e8q`).
+- **Moves in plain words or notation:** "bishop on c4 to d5", "c4 to d5", "knight to f3", "pawn takes d5", "castle kingside", "e7 to e8 queen", or `e4`, `Nf3`, `O-O`. When a move can't be played the coach says why ("There's no bishop on c4.", "The bishop on c4 can't move to c5.") and asks which piece when two can reach the square.
 - **Spoken narration** in plain words: "Black plays knight takes pawn on e4, check." Audio comes from ElevenLabs through the API, queued so lines never overlap, with the browser's own voice as a fallback so speech never blocks the game.
 - **Every input gets a response.** Moves during the engine's turn, after the game ends, illegal moves, and empty input are all flagged with a spoken and visible reason; none of them change the game.
 - **Accessibility:** every spoken message also goes to an `aria-live` region, everything works by keyboard, there is a skip link, and the visual board is hidden from screen readers. A transcript shows the whole conversation.
@@ -22,10 +22,10 @@ Chess is the passion, voice is the interface, and the hard part is making a spok
 ## What is incomplete
 
 - **Voice input** (Web Speech push-to-talk) and the **spoken-move parser** ("knight to f three", homophones like "night", "for", "sea", and "Which knight?" questions). Typing is the only input today.
-- **Detailed illegal-move reasons** (for example "that would leave your king in check"); today the app says the move isn't legal.
+- **Check-specific reasons** ("that would leave your king in check"); today those moves get "can't move to".
 - **Board queries:** "read the board", "what's on the e file", "where is my queen".
 - **Take back and resign** by command, **settings** (voice, verbosity, confirmations), and saved games.
-- **Unit tests** for the game logic, and a Supabase Storage cache for speech audio that survives API restarts.
+- More unit tests (the move parser has them), and a Supabase Storage cache for speech audio that survives API restarts.
 
 ## Run both repos locally
 

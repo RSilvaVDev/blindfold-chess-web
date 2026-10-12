@@ -11,6 +11,7 @@ import {
   type TranscriptEntry,
 } from './sessionReducer';
 import type { GameSettings } from './types';
+import { MOVE_EXAMPLES, parseMove } from '../game-logic/parseMove';
 import { useChessGame, type ChessGame } from './useChessGame';
 import { useEngineTurn, type EngineTurn } from './useEngineTurn';
 import { useLeaveWarning } from './useLeaveWarning';
@@ -81,7 +82,7 @@ export function useGameSession(): GameSession {
       const text = raw.trim();
       if (!settings) return false;
       if (!text) {
-        flag('Type a move like e4 or Nf3.');
+        flag(`Type a move. ${MOVE_EXAMPLES}`);
         return false;
       }
       dispatch({ type: 'append', kind: 'you', text });
@@ -96,9 +97,25 @@ export function useGameSession(): GameSession {
         return false;
       }
 
-      const move = game.play(text);
+      const result = parseMove(text, {
+        legalMoves: game.legalMoves(),
+        pieceAt: (square) =>
+          now.board.flat().find((cell) => cell?.square === square) ?? null,
+        turn: now.turn,
+      });
+      if (result.kind === 'flag') {
+        flag(result.message);
+        return false;
+      }
+      const move = game.play({
+        from: result.move.from,
+        to: result.move.to,
+        ...(result.move.promotion
+          ? { promotion: result.move.promotion as 'q' | 'r' | 'b' | 'n' }
+          : {}),
+      });
       if (!move) {
-        flag(`${text} isn't a legal move here. Try a move like e4 or Nf3.`);
+        flag(`That move isn't legal here. ${MOVE_EXAMPLES}`);
         return false;
       }
       narrate(move, 'you');

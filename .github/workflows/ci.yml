@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   quality:
-    name: Format, lint, typecheck, build
+    name: Format, lint, typecheck, build, test
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -37,3 +37,5 @@ jobs:
       - run: pnpm typecheck
 
       - run: pnpm build
+
+      - run: pnpm test

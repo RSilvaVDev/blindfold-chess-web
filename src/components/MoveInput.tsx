@@ -4,8 +4,8 @@ interface MoveInputProps {
   onSubmit: (text: string) => boolean;
 }
 
-// Typed moves: the always-available alternative to voice input. Accepts
-// algebraic notation for now (e4, Nf3, O-O, e7e8q); spoken phrasing comes later.
+// Typed moves: the always-available alternative to voice input. Accepts plain
+// phrases ("bishop on c4 to d5") and algebraic notation; see parseMove.
 export function MoveInput({ onSubmit }: MoveInputProps) {
   const inputId = useId();
   const hintId = useId();
@@ -33,7 +33,8 @@ export function MoveInput({ onSubmit }: MoveInputProps) {
         <button type="submit">Play</button>
       </div>
       <p id={hintId} className="hint">
-        For example e4, Nf3, exd5, O-O, or e7e8q.
+        For example: bishop on c4 to d5, knight to f3, pawn takes d5, castle
+        kingside, or e4.
       </p>
     </form>
   );
