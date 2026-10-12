@@ -1,0 +1,27 @@
+# Secrets: only .env.example is committed
+.env
+.env.*
+!.env.example
+*.local
+*.pem
+*.key
+
+# Dependencies and build output
+node_modules/
+dist/
+dist-ssr/
+coverage/
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Editor and OS
+.vscode/
+.idea/
+*.sw?
+.DS_Store
+Thumbs.db
