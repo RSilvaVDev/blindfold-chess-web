@@ -5,8 +5,8 @@ export type LoginMode = 'sign-in' | 'sign-up';
 
 interface LoginFormProps {
   mode: LoginMode;
-  onModeChange(mode: LoginMode): void;
-  onSubmit(email: string, password: string): Promise<AuthResult>;
+  onModeChange: (mode: LoginMode) => void;
+  onSubmit: (email: string, password: string) => Promise<AuthResult>;
 }
 
 export function LoginForm({ mode, onModeChange, onSubmit }: LoginFormProps) {
@@ -40,7 +40,7 @@ export function LoginForm({ mode, onModeChange, onSubmit }: LoginFormProps) {
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={(event) => void handleSubmit(event)}
       noValidate
       aria-describedby={error ? `${emailId}-error` : undefined}
     >

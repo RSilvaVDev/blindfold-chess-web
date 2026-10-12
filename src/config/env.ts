@@ -5,8 +5,9 @@ export interface AppEnv {
 }
 
 function requireValue(name: keyof ImportMetaEnv): string {
-  const value = import.meta.env[name];
-  if (!value) {
+  // Vite types import.meta.env values loosely; narrow before use.
+  const value: unknown = import.meta.env[name];
+  if (typeof value !== 'string' || !value) {
     throw new Error(`Missing ${name}. Copy .env.example to .env and set it.`);
   }
   return value;

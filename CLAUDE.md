@@ -21,8 +21,9 @@ src/
                   the app says. No React, browser APIs, or network. Every file has tests.
                   types, homophones, normalize, tokenize, resolve, answers, flags, commands,
                   narrator, README.md
-  game-session/   Hooks that hold game state and call game-logic: useChessGame,
-                  useGameSession, sessionReducer, useLeaveWarning
+  game-session/   Game state and the hooks that call game-logic: GameStore (owns the
+                  chess.js instance), useChessGame, useGameSession, sessionReducer,
+                  useLeaveWarning
   engine/         StockfishClient, stockfish.worker.ts, levels.ts
   speech/         useSpeaker, AudioQueue, useSpeechRecognition
   auth/           supabaseClient, AuthProvider, useAuth, ProtectedRouteGuard
@@ -49,6 +50,7 @@ pnpm install
 pnpm dev                # vite
 pnpm format             # prettier --write .
 pnpm format:check       # prettier --check .
+pnpm lint               # eslint . (typescript-eslint type-aware + react-hooks)
 pnpm typecheck          # tsc -b --noEmit
 pnpm build              # vite build
 pnpm test               # vitest run (src/game-logic)
@@ -60,6 +62,8 @@ pnpm test               # vitest run (src/game-logic)
 - Guards end in `Guard`: `ProtectedRouteGuard`.
 - `src/game-logic/` holds only pure functions: data in, data out. Nothing there imports React, touches the DOM, calls `fetch`, or uses Web Speech or audio. Every new rule there gets a unit test.
 - `useGameSession` is the only place that changes game state in response to input. Components send input to it and render its state.
+- Mutable objects (the chess.js instance) live in a store outside React (`GameStore`) that publishes immutable snapshots; hooks read them with `useSyncExternalStore`. Never read a ref during render; the react-hooks lint rules enforce this.
+- Callback types are function properties (`onStart: (s: GameSettings) => void`), not method shorthand, so `@typescript-eslint/unbound-method` stays quiet for real reasons.
 - TypeScript strict. No `any`; narrow unknown input instead.
 - Comments are short and state the technical reason. No references to tickets, specs, or people.
 - Prettier settings match the API repo.
@@ -77,7 +81,7 @@ pnpm test               # vitest run (src/game-logic)
 ## Workflow
 
 - Work follows the build plan's commit order, one commit per plan entry, using the plan's commit message.
-- Every commit leaves the repo formatting cleanly, type-checking, building, and deployable. Before proposing a commit, run `pnpm format:check`, `pnpm typecheck`, `pnpm build`, and (once tests exist) `pnpm test`. CI (`.github/workflows/ci.yml`) runs the same on every push and pull request.
+- Every commit leaves the repo formatting cleanly, type-checking, building, and deployable. Before proposing a commit, run `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm build`, and (once tests exist) `pnpm test`. Fix lint errors instead of disabling rules; if a rule is pure noise, turn it off in `eslint.config.mjs` with a one-line reason. CI (`.github/workflows/ci.yml`) runs the same on every push and pull request.
 - A change that also needs the API is two commits, one per repo.
 - This repo's README is the main submission README. It links the API repo and both deployed URLs.
 

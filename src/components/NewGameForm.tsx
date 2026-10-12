@@ -17,7 +17,7 @@ const LEVELS: { value: EngineLevel; label: string }[] = [
 ];
 
 interface NewGameFormProps {
-  onStart(settings: GameSettings): void;
+  onStart: (settings: GameSettings) => void;
 }
 
 export function NewGameForm({ onStart }: NewGameFormProps) {

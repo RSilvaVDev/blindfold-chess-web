@@ -9,9 +9,9 @@ export interface AuthState {
   loading: boolean;
   // Set when the API rejected the session; shown on the login page.
   notice: string | null;
-  signIn(email: string, password: string): Promise<AuthResult>;
-  signUp(email: string, password: string): Promise<AuthResult>;
-  signOut(): Promise<void>;
+  signIn: (email: string, password: string) => Promise<AuthResult>;
+  signUp: (email: string, password: string) => Promise<AuthResult>;
+  signOut: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthState | null>(null);
