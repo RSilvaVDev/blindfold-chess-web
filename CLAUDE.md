@@ -10,7 +10,7 @@ Out (do not build unless asked): saving/resuming games, game history, hints, spe
 
 ## Stack
 
-React, TypeScript (strict), Vite, React Router, vitest, chess.js, Stockfish (WASM in a Web Worker), Web Speech API (voice in), ElevenLabs via the API with `speechSynthesis` fallback (voice out), `supabase-js` (auth). Deployed as one Railway static service.
+React, TypeScript (strict), Vite, React Router, vitest, chess.js, Stockfish (WASM in a Web Worker), Web Speech API (voice in), ElevenLabs via the API with `speechSynthesis` fallback (voice out), `supabase-js` (auth). Deployed as one Railway static service (Railpack serves `dist/` with Caddy).
 
 ## Layout
 
@@ -94,4 +94,4 @@ Listed with placeholder values in `.env.example`. `VITE_` variables are bundled 
 - Web Speech recognition works in Chrome and Edge only.
 - The engine moves first when the player picks Black.
 - Audio playback needs a prior user gesture; the first spoken line follows the Start game click.
-- Railway serves the build with `serve -s dist` so client routes resolve to `index.html`.
+- Railway's Railpack builder detects the Vite app and serves `dist/` with Caddy. Never add a start command or `start` script for production: either one turns static serving off. `RAILPACK_SPA_OUTPUT_DIR=dist` forces the folder if detection ever misfires.

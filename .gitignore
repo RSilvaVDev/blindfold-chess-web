@@ -19,6 +19,9 @@ logs/
 npm-debug.log*
 pnpm-debug.log*
 
+# Local Claude Code settings and worktrees
+.claude/
+
 # Editor and OS
 .vscode/
 .idea/
