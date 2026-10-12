@@ -1,5 +1,5 @@
 import { useCallback, useReducer, useState } from 'react';
-import type { Move } from 'chess.js';
+import type { Move, Square } from 'chess.js';
 import {
   COLOR_NAME,
   describeMove,
@@ -11,6 +11,7 @@ import {
   type TranscriptEntry,
 } from './sessionReducer';
 import type { GameSettings } from './types';
+import { normalizeSpeech } from '../game-logic/normalizeSpeech';
 import { MOVE_EXAMPLES, parseMove } from '../game-logic/parseMove';
 import { useChessGame, type ChessGame } from './useChessGame';
 import { useEngineTurn, type EngineTurn } from './useEngineTurn';
@@ -26,6 +27,10 @@ export interface GameSession {
   start: (settings: GameSettings) => void;
   // Returns true when the input was played, so the field can clear.
   submit: (text: string) => boolean;
+  // Speech recognition alternatives, best first.
+  submitSpoken: (alternatives: string[]) => void;
+  // Reports a voice-input problem (mic blocked, nothing heard).
+  voiceError: (message: string) => void;
   leave: () => void;
 }
 
@@ -77,15 +82,17 @@ export function useGameSession(): GameSession {
     [game, say],
   );
 
-  const submit = useCallback(
-    (raw: string): boolean => {
-      const text = raw.trim();
+  // Plays the first candidate that is a legal move; otherwise flags why the
+  // first one can't be played. Typed input has one candidate; speech has the
+  // recognizer's alternatives.
+  const attempt = useCallback(
+    (candidates: string[], shown: string): boolean => {
       if (!settings) return false;
-      if (!text) {
-        flag(`Type a move. ${MOVE_EXAMPLES}`);
+      if (candidates.every((c) => !c.trim())) {
+        flag(`Type or say a move. ${MOVE_EXAMPLES}`);
         return false;
       }
-      dispatch({ type: 'append', kind: 'you', text });
+      dispatch({ type: 'append', kind: 'you', text: shown });
 
       const now = latest();
       if (now.status.kind !== 'active') {
@@ -97,21 +104,24 @@ export function useGameSession(): GameSession {
         return false;
       }
 
-      const result = parseMove(text, {
+      const context = {
         legalMoves: game.legalMoves(),
-        pieceAt: (square) =>
+        pieceAt: (square: Square) =>
           now.board.flat().find((cell) => cell?.square === square) ?? null,
         turn: now.turn,
-      });
-      if (result.kind === 'flag') {
-        flag(result.message);
+      };
+      const results = candidates.map((c) => parseMove(c, context));
+      const found = results.find((r) => r.kind === 'move');
+      if (!found) {
+        const first = results[0];
+        flag(first?.kind === 'flag' ? first.message : MOVE_EXAMPLES);
         return false;
       }
       const move = game.play({
-        from: result.move.from,
-        to: result.move.to,
-        ...(result.move.promotion
-          ? { promotion: result.move.promotion as 'q' | 'r' | 'b' | 'n' }
+        from: found.move.from,
+        to: found.move.to,
+        ...(found.move.promotion
+          ? { promotion: found.move.promotion as 'q' | 'r' | 'b' | 'n' }
           : {}),
       });
       if (!move) {
@@ -122,6 +132,21 @@ export function useGameSession(): GameSession {
       return true;
     },
     [settings, flag, latest, game, narrate],
+  );
+
+  const submit = useCallback(
+    (raw: string): boolean => attempt([raw.trim()], raw.trim()),
+    [attempt],
+  );
+
+  const submitSpoken = useCallback(
+    (alternatives: string[]): void => {
+      attempt(
+        alternatives.map(normalizeSpeech),
+        `(said) ${alternatives[0] ?? ''}`,
+      );
+    },
+    [attempt],
   );
 
   const leave = useCallback(() => {
@@ -147,6 +172,8 @@ export function useGameSession(): GameSession {
     announcement,
     start,
     submit,
+    submitSpoken,
+    voiceError: flag,
     leave,
   };
 }

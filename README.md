@@ -1,6 +1,6 @@
 # Blindfold Chess Coach
 
-A voice-first chess app for blind and low-vision players, and for sighted players who want to practice playing without a board. You play Stockfish by typing moves; the coach speaks every move, reply, and mistake out loud, and the same messages appear on screen and in a screen-reader live region.
+A voice-first chess app for blind and low-vision players, and for sighted players who want to practice playing without a board. You play Stockfish by speaking or typing moves in plain words ("bishop on c4 to d5"); the coach speaks every move, reply, and mistake out loud, and the same messages appear on screen and in a screen-reader live region.
 
 Chess is the passion, voice is the interface, and the hard part is making a spoken game trustworthy: the app never guesses a move and never silently ignores input.
 
@@ -13,6 +13,7 @@ Chess is the passion, voice is the interface, and the hard part is making a spok
 - **Accounts:** sign up and sign in with email and password (Supabase Auth). Protected pages redirect to sign-in and back; an expired session signs you out and says why on the sign-in page.
 - **A full game against Stockfish** (WebAssembly, in a Web Worker) at easy, medium, or hard, as White or Black. As Black, the engine moves first. A "thinking" notice appears if it takes over two seconds. If Stockfish can't load, a random-move opponent keeps the game playable.
 - **Moves in plain words or notation:** "bishop on c4 to d5", "c4 to d5", "knight to f3", "pawn takes d5", "castle kingside", "e7 to e8 queen", or `e4`, `Nf3`, `O-O`. When a move can't be played the coach says why ("There's no bishop on c4.", "The bishop on c4 can't move to c5.") and asks which piece when two can reach the square.
+- **Voice input:** press **Speak a move** and say it (Chrome or Edge, Web Speech API). Common mishearings are corrected ("see four" is c4, "night" is knight), and the app tries the recognizer's alternatives and plays the first one that is a legal move. What it heard is shown in the transcript. Typing always works too, and a blocked or missing microphone is explained out loud.
 - **Spoken narration** in plain words: "Black plays knight takes pawn on e4, check." Audio comes from ElevenLabs through the API, queued so lines never overlap, with the browser's own voice as a fallback so speech never blocks the game.
 - **Every input gets a response.** Moves during the engine's turn, after the game ends, illegal moves, and empty input are all flagged with a spoken and visible reason; none of them change the game.
 - **Accessibility:** every spoken message also goes to an `aria-live` region, everything works by keyboard, there is a skip link, and the visual board is hidden from screen readers. A transcript shows the whole conversation.
@@ -21,7 +22,7 @@ Chess is the passion, voice is the interface, and the hard part is making a spok
 
 ## What is incomplete
 
-- **Voice input** (Web Speech push-to-talk) and the **spoken-move parser** ("knight to f three", homophones like "night", "for", "sea", and "Which knight?" questions). Typing is the only input today.
+- **Voice input outside Chrome and Edge** (Firefox and Safari lack the Web Speech recognition API), and spoken answers to the coach's questions ("the one on b1"); today you repeat the move with its square.
 - **Check-specific reasons** ("that would leave your king in check"); today those moves get "can't move to".
 - **Board queries:** "read the board", "what's on the e file", "where is my queen".
 - **Take back and resign** by command, **settings** (voice, verbosity, confirmations), and saved games.

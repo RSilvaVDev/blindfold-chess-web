@@ -1,3 +1,17 @@
+/* The main voice control: large target, clear listening state. */
+.push-to-talk {
+  font-size: 1.25rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.push-to-talk.listening {
+  background: #c0392b;
+  color: #fff;
+  border-color: #c0392b;
+}
+
 :root {
   color-scheme: light dark;
   font-family:

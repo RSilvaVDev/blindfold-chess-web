@@ -9,7 +9,9 @@ import { NewGameForm } from '../components/NewGameForm';
 import { Transcript } from '../components/Transcript';
 import { COLOR_NAME } from '../game-logic/narrator';
 import { useGameSession } from '../game-session/useGameSession';
+import { PushToTalkButton } from '../components/PushToTalkButton';
 import { useSpeaker } from '../speech/useSpeaker';
+import { useSpeechRecognition } from '../speech/useSpeechRecognition';
 
 interface Me {
   id: string;
@@ -23,6 +25,7 @@ export function PlayPage() {
   // Every announcement is spoken (ElevenLabs, or the browser voice as fallback)
   // and also lands in the live region and transcript.
   useSpeaker(session.announcement);
+  const speech = useSpeechRecognition(session.submitSpoken, session.voiceError);
   const [me, setMe] = useState<Me | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,6 +71,7 @@ export function PlayPage() {
             orientation={settings.playerColor}
             lastMove={game.lastMove}
           />
+          <PushToTalkButton speech={speech} />
           <MoveInput onSubmit={session.submit} />
           <Transcript entries={session.transcript} />
           <button type="button" onClick={session.leave}>
